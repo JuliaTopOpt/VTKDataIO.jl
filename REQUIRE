@@ -1,1 +1,7 @@
 julia 0.6
+
+VTKDataTypes
+WriteVTK
+PyCall
+LightXML
+Iterators
