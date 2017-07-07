@@ -70,3 +70,4 @@ If you have the RGB colors data directly, you can inform the `visualize` functio
 rect.point_data["RGB colors"] = reshape([round(255*rand()) for i in 1:3*num_of_points(rect)], (3, extents(rect)...));
 visualize(rect, color="RGB colors", RGB=true)
 ```
+![image](https://user-images.githubusercontent.com/19524993/27943459-0a56382e-62e8-11e7-993d-95b676338f97.png)
