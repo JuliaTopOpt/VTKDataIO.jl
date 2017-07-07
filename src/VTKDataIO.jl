@@ -19,6 +19,6 @@ include("PyVTK.jl")
 include("visualize.jl")
 
 export read_vtk, write_vtk, read_stl, write_stl, valid_to_write, PyVTK, 
-    _VTKDataTypes, visualize, save_x3d, read_obj, read_ply
+    _VTKDataTypes, visualize, write_x3d, write_ply, read_obj, read_ply
 
 end

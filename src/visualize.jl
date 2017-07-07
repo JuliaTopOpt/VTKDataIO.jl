@@ -6,7 +6,7 @@ function visualize(dataset::AbstractStaticVTKData; color="", RGB=false, componen
     renderwindow[:Finalize]()
 end
 
-function save_x3d(dataset::AbstractStaticVTKData, filepath_noext::String; color="", RGB=false, component=-1, opacity=1., window_size=(1000,600), ncolors=100, background=(.1, .2, .3), legend=false, legendtitle=color, scale_factor=1, representation=:simple)
+function write_x3d(dataset::AbstractStaticVTKData, filepath_noext::String; color="", RGB=false, component=-1, opacity=1., window_size=(1000,600), ncolors=100, background=(.1, .2, .3), legend=false, legendtitle=color, scale_factor=1, representation=:simple)
     polydata = VTKPolyData(dataset)
     if color != "" && legend
         save_legend(polydata, string(filepath_noext, "_legend.png"), color=color, component=component, window_size=window_size, ncolors=ncolors, opacity=opacity, background=background, legendtitle=legendtitle)
@@ -24,9 +24,9 @@ function save_x3d(dataset::AbstractStaticVTKData, filepath_noext::String; color=
     renderwindow[:Finalize]()
 end
 
-function save_ply(dataset, filepath_noext; color="", component=-1, opacity=1., window_size=(800,600), ncolors=100, background=(.1, .2, .3), legend=false, legendtitle=color, scale_factor=1, representation=:simple)
+function write_ply(dataset, filepath_noext; color="", component=-1, opacity=1., window_size=(800,600), ncolors=100, background=(.1, .2, .3), legend=false, legendtitle=color, scale_factor=1, representation=:simple)
     if representation == :wireframe
-        throw("save_ply does not support wireframe representation.")
+        throw("write_ply does not support wireframe representation.")
     end
 
     if color in keys(dataset.point_data)
