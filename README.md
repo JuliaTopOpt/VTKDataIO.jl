@@ -5,10 +5,14 @@ VTKDataIO.jl presents a number of input, output and visualization functionalitie
 
 ## Summary of capabilities
 ### Input and output
-You can use VTKDataIO.jl to read/write any of the following file formats into/from the corresponding type in VTKDataTypes.jl: vtk, vtu, vtp, vts, vtr, vti, vtm, pvd, stl, ply.
+You can use VTKDataIO.jl to read/write any of the following file formats into/from the corresponding type in VTKDataTypes.jl: vtk, vtu, vtp, vts, vtr, vti, vtm, pvd, stl, ply. You can do this using `read_vtk`, `write_vtk`, `read_stl`, `write_stl`, `read_ply`, and `write_ply`.
 
 ### Visualization and rendered output
-You can use VTKDataIO.jl to visualize a scalar or vector field with a 3D heat map and a legend. This includes point-based coloring or cell based coloring, as well as other features such as wireframe and glyph representations. The resulting visualization can be written to ply or x3d formats.
+You can use VTKDataIO.jl to visualize a scalar or vector field with a 3D heat map and a legend. This includes point-based coloring or cell based coloring, as well as other features such as wireframe and glyph representations. The resulting visualization can be written to ply or x3d formats. You can do this using `visualize`, `write_x3d`, and `write_ply`.
+
+### Interfacing with Python's VTK
+
+You can use `PyVTK` to change a Julia native VTK object to a VTK data PyObject that can be used in your own VTK pipeline through PyCall. You can also use `_VTKDataTypes` to change a VTK data PyObject back to Julia's native VTK types.
 
 ## Setup
 
