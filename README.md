@@ -48,3 +48,4 @@ rect = VTKRectilinearData([x,y,z]);
 rect.cell_data["Cell scalar"] = reshape([rand() for i in 1:num_of_cells(rect)], cell_extents(rect));
 visualize(rect, color="Cell scalar")
 ```
+![image](https://user-images.githubusercontent.com/19524993/27942949-d09cb120-62e3-11e7-926a-4931d466388c.png)
