@@ -35,7 +35,7 @@ using PyCall
 @pyimport numpy as np
 ```
 
-## Test case
+## Test cases
 
 If you run the following code, you should be able to get a cubic mesh with randomly coloured cells.
 
@@ -49,3 +49,18 @@ rect.cell_data["Cell scalar"] = reshape([rand() for i in 1:num_of_cells(rect)], 
 visualize(rect, color="Cell scalar")
 ```
 ![image](https://user-images.githubusercontent.com/19524993/27942949-d09cb120-62e3-11e7-926a-4931d466388c.png)
+
+You can also do point-based coloring as so:
+```
+rect.point_data["Point scalar"] = reshape([rand() for i in 1:num_of_points(rect)], extents(rect));
+visualize(rect, color="Point scalar")
+```
+![image](https://user-images.githubusercontent.com/19524993/27943028-86c4f0fc-62e4-11e7-899e-fe19fcd326d2.png)
+
+Point based vector data can be represented by arrows using the `representation` option.
+
+```
+rect.point_data["Point vector"] = reshape([1 for i in 1:3*num_of_points(rect)], (3, extents(rect)...));
+visualize(rect, color="Point vector", representation=:glyph, scale_factor=0.5)
+```
+![image](https://user-images.githubusercontent.com/19524993/27943114-2abdb770-62e5-11e7-8c25-320037604285.png)
