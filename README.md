@@ -42,5 +42,5 @@ using VTKDataIO
 x = y = z = [-2, -1, 0, 1, 2];
 rect = VTKRectilinearData([x,y,z]);
 rect.cell_data["Cell scalar"] = reshape([rand() for i in 1:num_of_cells(rect)], cell_extents(rect));
-visualize(rect, color="Cell scalar", legendtitle="Random number")
+visualize(rect, color="Cell scalar")
 ```
