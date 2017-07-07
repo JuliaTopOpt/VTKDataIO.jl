@@ -277,8 +277,8 @@ function make_render_window_and_interactor{T<:AbstractStaticVTKData}(dataset::T,
 
     if color in keys(dataset.point_data)
         if RGB
-            jl_mapped_colors = UInt8.(reshape(dataset.point_data[color], 
-                (size(dataset.point_data[color], 1), num_of_points(dataset))))
+            jl_mapped_colors = UInt8.(round.(reshape(dataset.point_data[color], 
+                (size(dataset.point_data[color], 1), num_of_points(dataset)))))
             mapped_colors = vtkns.numpy_to_vtk(PyReverseDims(jl_mapped_colors))
             mapped_colors[:SetNumberOfComponents](size(dataset.point_data[color], 1))
             vtkobject[:GetPointData]()[:SetScalars](mapped_colors)
@@ -291,8 +291,8 @@ function make_render_window_and_interactor{T<:AbstractStaticVTKData}(dataset::T,
         end
     elseif color in keys(dataset.cell_data)
         if RGB
-            jl_mapped_colors = UInt8.(reshape(dataset.cell_data[color], 
-                (size(dataset.cell_data[color], 1), num_of_cells(dataset))))
+            jl_mapped_colors = UInt8.(round.(reshape(dataset.cell_data[color], 
+                (size(dataset.cell_data[color], 1), num_of_cells(dataset)))))
             mapped_colors = vtkns.numpy_to_vtk(PyReverseDims(jl_mapped_colors))
             mapped_colors[:SetNumberOfComponents](size(dataset.cell_data[color], 1))
             vtkobject[:GetCellData]()[:SetScalars](mapped_colors)
