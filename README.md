@@ -1,16 +1,16 @@
 # VTKDataIO
 
-##Overview
+## Overview
 VTKDataIO.jl presents a number of input, output and visualization functionalities for geometric meshes with point and cell scalar and vector data. This module attempts to bridge between VTKDataTypes.jl, Julia's native module for representing VTK data types and the Visualization Toolkit (VTK) hence giving access to many of VTK's capabilities to Julia users. VTKDataIO.jl **only supports Julia v0.6.**
 
-##Summary of capabilities
-###Input and output
+## Summary of capabilities
+### Input and output
 You can use VTKDataIO.jl to read/write any of the following file formats into/from the corresponding type in VTKDataTypes.jl: vtk, vtu, vtp, vts, vtr, vti, vtm, pvd, stl, ply.
 
-###Visualization and rendered output
+### Visualization and rendered output
 You can use VTKDataIO.jl to visualize a scalar or vector field with a 3D heat map and a legend. This includes point-based coloring or cell based coloring, as well as other features such as wireframe and glyph representations. The resulting visualization can be written to ply or x3d formats.
 
-##Setup
+## Setup
 
 *The following are the setup steps in Windows. If you are using other OS and you can't set it up, please let me know and I will try to help if I can. Basically if you can reach step 7, you are ready to use VTKDataIO.jl even if you didn't eactly follow the previous steps!*
 
@@ -31,7 +31,7 @@ using PyCall
 @pyimport numpy as np
 ```
 
-##Test case
+## Test case
 
 If you run the following code, you should be able to get a cubic mesh with randomly coloured cells.
 
