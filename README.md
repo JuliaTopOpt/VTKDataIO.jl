@@ -58,12 +58,17 @@ visualize(rect, color="Point scalar")
 ![image](https://user-images.githubusercontent.com/19524993/27943028-86c4f0fc-62e4-11e7-899e-fe19fcd326d2.png)
 
 Point based vector data can be represented by arrows using the `representation` option.
-
 ```
 rect.point_data["Point vector"] = reshape([2*rand()-1 for i in 1:3*num_of_points(rect)], (3, extents(rect)...));
 visualize(rect, color="Point vector", representation=:glyph, scale_factor=0.5)
 ```
 ![image](https://user-images.githubusercontent.com/19524993/27943114-2abdb770-62e5-11e7-8c25-320037604285.png)
+
+Wireframe representation can be used as follows:
+```
+visualize(rect, color="Point scalar", representation=:wireframe)
+```
+![image](https://user-images.githubusercontent.com/19524993/27991226-8b2b60c8-6478-11e7-8bd9-0d451a212ba2.png)
 
 If you have the RGB colors data directly, you can inform the `visualize` function to use it using the `RGB = true` option as so:
 ```
