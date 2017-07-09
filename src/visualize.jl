@@ -6,6 +6,41 @@ function visualize(dataset::AbstractStaticVTKData; color="", RGB=false, componen
     renderwindow[:Finalize]()
 end
 
+function visualize_3ds(filename::AbstractString; window_size=(1000,600), background=(0.1, 0.2, 0.4), camera_position=(0, 1, 0), camera_focal=(0, 0, 0), camera_up=(0,0,1), camera_dolly=1.4)
+    importer = vtk.vtk3DSImporter()
+    importer[:ComputeNormalsOn]()
+    importer[:SetFileName](filename)
+    importer[:Read]()
+    renderwindow = importer[:GetRenderWindow]()
+    interactor = vtk.vtkRenderWindowInteractor()
+    interactor[:SetRenderWindow](renderwindow)
+    renderwindow[:SetSize](window_size...);
+
+    renderer = importer[:GetRenderer]()
+    renderer[:SetBackground](background);
+
+    camera = renderer[:GetActiveCamera]()
+    camera[:SetFocalPoint](camera_focal) #Center
+    camera[:Azimuth](37.5)
+    camera[:Elevation](30)
+    camera[:Dolly](camera_dolly)
+
+    renderer[:ResetCamera]();
+    renderer[:ResetCameraClippingRange]();
+
+    axes = vtk.vtkAxesActor() 
+    widget = vtk.vtkOrientationMarkerWidget()
+    widget[:SetOutlineColor](0.9300,0.5700,0.1300)
+    widget[:SetOrientationMarker](axes)
+    widget[:SetInteractor](interactor)
+    widget[:SetViewport](0., 0., 0.2, 0.2)
+    widget[:SetEnabled](1)
+    widget[:InteractiveOn]()
+
+    renderwindow[:Render]()
+    interactor[:Start]();
+end
+
 function write_x3d(dataset::AbstractStaticVTKData, filepath_noext::String; color="", RGB=false, component=-1, opacity=1., window_size=(1000,600), ncolors=100, background=(.1, .2, .3), legend=false, legendtitle=color, scale_factor=1, representation=:simple)
     polydata = VTKPolyData(dataset)
     if color != "" && legend

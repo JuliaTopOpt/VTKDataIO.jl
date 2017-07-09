@@ -19,7 +19,7 @@ function write_simple_file{T<:AbstractVTKSimpleData}(vtkobject::T, filepath_or_v
         points = vtkobject.point_coords 
         vtkfile = vtk_grid(filepath_or_vtmfile, points...)
     elseif T <: VTKUniformRectilinearData
-        vtkfile = vtk_grid(filepath_or_vtmfile, vtkobject.extents..., vtkobject.origin, vtkobject.spacing)
+        vtkfile = vtk_grid(filepath_or_vtmfile, vtkobject.extents..., origin=vtkobject.origin, spacing=vtkobject.spacing)
     end
 
     for v in keys(vtkobject.point_data)
@@ -145,11 +145,13 @@ function valid_to_write(vtkobject::AbstractTimeSeriesVTKData)
     return true, ""
 end
 
-function write_vtk{T<:AbstractVTKData}(vtkobject::T, filepath_no_ext::String; time_resolution::Int=1)
-    valid, _error = is_valid(vtkobject)
-    valid || throw("Invalid data, cannot be written: $_error")
-    valid, _error = valid_to_write(vtkobject)
-    valid || throw("Invalid data, cannot be written: $_error")
+function write_vtk{T<:AbstractVTKData}(vtkobject::T, filepath_no_ext::String; time_resolution::Int=1, validation=false, repeat_cells=false)
+    if validation
+        valid, _error = is_valid(vtkobject, repeat_cells=repeat_cells)
+        valid || throw("Invalid data, cannot be written: $_error")
+        valid, _error = valid_to_write(vtkobject)
+        valid || throw("Invalid data, cannot be written: $_error")
+    end
 
     if T <: VTKPolyData
         return write_vtp(vtkobject, filepath_no_ext)

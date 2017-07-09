@@ -246,7 +246,7 @@ function get_structured_point_and_cell_data(block)
         _point_data = block[:GetPointData]()[:GetArray](i-1)
         if pytype_as_string(_point_data) != "NoneType"
             _point_data_ = vtk_to_julia(_point_data, Float64)
-            var_dim = size(_point_data_, 1)
+            var_dim = length(size(_point_data_)) == 1 ? 1 : size(_point_data_,1)
             if var_dim == 1
                 point_data[var_name] = reshape(_point_data_, _extents)
             else
@@ -264,7 +264,7 @@ function get_structured_point_and_cell_data(block)
         _cell_data = block[:GetCellData]()[:GetArray](i-1)
         if pytype_as_string(_cell_data) != "NoneType"
             _cell_data_ = vtk_to_julia(_cell_data, Float64)
-            var_dim = size(_cell_data_, 1)
+            var_dim = length(size(_cell_data_)) == 1 ? 1 : size(_cell_data_,1)
             if var_dim == 1
                 cell_data[var_name] = reshape(_cell_data_, cell_extents)
             else
@@ -277,7 +277,7 @@ function get_structured_point_and_cell_data(block)
 end
 
 function extract_structured_data(block)
-    _point_coords = vtk_to_julia(block[:GetPoints]()[:GetData]())
+    _point_coords = vtk_to_julia(block[:GetPoints]()[:GetData](), Float64)
 
     _extents = block[:GetDimensions]()
     _dim = length(_extents)
@@ -337,7 +337,7 @@ end
 
 function extract_blocked_data(multiblock_pyobject)
     blocks = get_blocks(multiblock_pyobject)
-    multiblock_data = AbstractStaticVTKData[]
+    multiblock_data = AbstractStaticVTKData{Float64}[]
     for block in blocks
         block_data = extract_simple_data(block)
         push!(multiblock_data, block_data)
