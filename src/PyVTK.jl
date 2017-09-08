@@ -30,7 +30,6 @@ VTKClasses = Dict(0=>vtk.vtkEmptyCell,
         33=>vtk.vtkBiQuadraticQuadraticHexahedron,
         34=>vtk.vtkBiQuadraticTriangle,
         35=>vtk.vtkCubicLine,
-        36=>vtk.vtkQuadraticPolygon,
         41=>vtk.vtkConvexPointSet,
         42=>vtk.vtkPolyhedron)
 
