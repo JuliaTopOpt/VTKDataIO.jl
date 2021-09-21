@@ -309,6 +309,7 @@ function make_render_window_and_interactor(dataset::T, color,
     representation) where {T<:AbstractStaticVTKData}
 
     vtkobject = PyVTK(dataset)
+    cmin = cmax = nothing
     if color in keys(dataset.point_data)
         if RGB
             jl_mapped_colors = UInt8.(round.(reshape(dataset.point_data[color], 
@@ -362,7 +363,7 @@ function make_render_window_and_interactor(dataset::T, color,
     if color == "" 
         actor.GetProperty().SetColor(1.0, 1.0, 1.0)
     end
-    if isdefined(:cmin) && isdefined(:cmax) && cmin ≈ cmax
+    if cmin !== nothing && cmax !== nothing && cmin ≈ cmax
         actor.GetProperty().SetColor(0.0, 0.0, 1.0)
     end
     if representation == :wireframe
