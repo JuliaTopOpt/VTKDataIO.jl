@@ -1,7 +1,11 @@
 # VTKDataIO
 
 ## Overview
-VTKDataIO.jl presents a number of input, output and visualization functionalities for geometric meshes with point and cell scalar and vector data. This module attempts to bridge between VTKDataTypes.jl, Julia's native module for representing VTK data types and the Visualization Toolkit (VTK) hence giving access to many of VTK's capabilities to Julia users. **VTKDataIO.jl only supports Julia v0.6.**
+VTKDataIO.jl presents a number of input, output and visualization functionalities for geometric meshes with point and cell scalar and vector data. This module attempts to bridge between VTKDataTypes.jl, Julia's native module for representing VTK data types and the Visualization Toolkit (VTK) hence giving access to many of VTK's capabilities to Julia users.
+
+## Python version
+
+**VTKDataIO.jl was only tested with Python 3.8.** Make sure [PyCall](https://github.com/JuliaPy/PyCall.jl) is buit to use Python 3.8.
 
 ## Summary of capabilities
 ### Input and output
