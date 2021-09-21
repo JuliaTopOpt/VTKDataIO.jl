@@ -1,44 +1,44 @@
 
 function visualize(dataset::AbstractStaticVTKData; color="", RGB=false, component=-1, opacity=1., window_size=(1000,600), ncolors=100, legend=false, legendtitle=color, scale_factor=1, representation=:simple)
     renderwindow, interactor = make_render_window_and_interactor(dataset, color, RGB, component, opacity, window_size, ncolors, legend, legendtitle, scale_factor, representation)
-    renderwindow[:Render]()
-    interactor[:Start]()
-    renderwindow[:Finalize]()
+    renderwindow.Render()
+    interactor.Start()
+    renderwindow.Finalize()
 end
 
 function visualize_3ds(filename::AbstractString; window_size=(1000,600), background=(0.1, 0.2, 0.4), camera_position=(0, 1, 0), camera_focal=(0, 0, 0), camera_up=(0,0,1), camera_dolly=1.4)
     importer = vtk.vtk3DSImporter()
-    importer[:ComputeNormalsOn]()
-    importer[:SetFileName](filename)
-    importer[:Read]()
-    renderwindow = importer[:GetRenderWindow]()
+    importer.ComputeNormalsOn()
+    importer.SetFileName(filename)
+    importer.Read()
+    renderwindow = importer.GetRenderWindow()
     interactor = vtk.vtkRenderWindowInteractor()
-    interactor[:SetRenderWindow](renderwindow)
-    renderwindow[:SetSize](window_size...);
+    interactor.SetRenderWindow(renderwindow)
+    renderwindow.SetSize(window_size...);
 
-    renderer = importer[:GetRenderer]()
-    renderer[:SetBackground](background);
+    renderer = importer.GetRenderer()
+    renderer.SetBackground(background);
 
-    camera = renderer[:GetActiveCamera]()
-    camera[:SetFocalPoint](camera_focal) #Center
-    camera[:Azimuth](37.5)
-    camera[:Elevation](30)
-    camera[:Dolly](camera_dolly)
+    camera = renderer.GetActiveCamera()
+    camera.SetFocalPoint(camera_focal) #Center
+    camera.Azimuth(37.5)
+    camera.Elevation(30)
+    camera.Dolly(camera_dolly)
 
-    renderer[:ResetCamera]();
-    renderer[:ResetCameraClippingRange]();
+    renderer.ResetCamera();
+    renderer.ResetCameraClippingRange();
 
     axes = vtk.vtkAxesActor() 
     widget = vtk.vtkOrientationMarkerWidget()
-    widget[:SetOutlineColor](0.9300,0.5700,0.1300)
-    widget[:SetOrientationMarker](axes)
-    widget[:SetInteractor](interactor)
-    widget[:SetViewport](0., 0., 0.2, 0.2)
-    widget[:SetEnabled](1)
-    widget[:InteractiveOn]()
+    widget.SetOutlineColor(0.9300,0.5700,0.1300)
+    widget.SetOrientationMarker(axes)
+    widget.SetInteractor(interactor)
+    widget.SetViewport(0., 0., 0.2, 0.2)
+    widget.SetEnabled(1)
+    widget.InteractiveOn()
 
-    renderwindow[:Render]()
-    interactor[:Start]();
+    renderwindow.Render()
+    interactor.Start();
 end
 
 function write_x3d(dataset::AbstractStaticVTKData, filepath_noext::String; color="", RGB=false, component=-1, opacity=1., window_size=(1000,600), ncolors=100, background=(.1, .2, .3), legend=false, legendtitle=color, scale_factor=1, representation=:simple)
@@ -48,15 +48,15 @@ function write_x3d(dataset::AbstractStaticVTKData, filepath_noext::String; color
     end
 
     renderwindow, interactor = make_render_window_and_interactor(polydata, color, RGB, component, opacity, window_size, ncolors, legend, legendtitle, scale_factor, representation)
-    renderwindow[:OffScreenRenderingOn]()
-    renderwindow[:Render]()
+    renderwindow.OffScreenRenderingOn()
+    renderwindow.Render()
 
     writer = vtk.vtkX3DExporter()
-    writer[:SetFileName](string(filepath_noext, ".x3d"))
-    writer[:SetRenderWindow](renderwindow)
-    writer[:Update]()
+    writer.SetFileName(string(filepath_noext, ".x3d"))
+    writer.SetRenderWindow(renderwindow)
+    writer.Update()
 
-    renderwindow[:Finalize]()
+    renderwindow.Finalize()
 end
 
 function write_ply(dataset, filepath_noext; color="", component=-1, opacity=1., window_size=(800,600), ncolors=100, background=(.1, .2, .3), legend=false, legendtitle=color, scale_factor=1, representation=:simple)
@@ -83,43 +83,43 @@ function write_ply(dataset, filepath_noext; color="", component=-1, opacity=1., 
     end
 
     if point_color
-        mapped_colors = vtkns.numpy_to_vtk(PyReverseDims(jl_mapped_colors))
-        mapped_colors[:SetName]("**_$(color)_**")
-        mapped_colors[:SetNumberOfComponents](size(jl_mapped_colors, 1))
-        vtkobject[:GetPointData]()[:SetScalars](mapped_colors)
+        mapped_colors = julia_to_vtk(jl_mapped_colors)
+        mapped_colors.SetName("**_$(color)_**")
+        mapped_colors.SetNumberOfComponents(size(jl_mapped_colors, 1))
+        vtkobject.GetPointData().SetScalars(mapped_colors)
     else
-        mapped_colors = vtkns.numpy_to_vtk(PyReverseDims(jl_mapped_colors))
-        mapped_colors[:SetName]("**_$(color)_**")
-        mapped_colors[:SetNumberOfComponents](size(jl_mapped_colors, 1))
-        vtkobject[:GetCellData]()[:SetScalars](mapped_colors)
+        mapped_colors = julia_to_vtk(jl_mapped_colors)
+        mapped_colors.SetName("**_$(color)_**")
+        mapped_colors.SetNumberOfComponents(size(jl_mapped_colors, 1))
+        vtkobject.GetCellData().SetScalars(mapped_colors)
     end
 
     if representation == :glyph
-        vtkobject[:GetPointData]()[:SetActiveVectors](color)
+        vtkobject.GetPointData().SetActiveVectors(color)
         arrow_source = vtk.vtkArrowSource()
         glyph_filter = vtk.vtkGlyph3D()
-        glyph_filter[:SetSourceConnection](arrow_source[:GetOutputPort]())
-        glyph_filter[:SetScaleFactor](0.005*scale_factor)
-        glyph_filter[:SetColorModeToColorByScalar]()
-        glyph_filter[:SetInputData](vtkobject)
-        glyph_filter[:OrientOn]()
-        glyph_filter[:SetVectorModeToUseVector]()
-        glyph_filter[:Update]()
+        glyph_filter.SetSourceConnection(arrow_source.GetOutputPort())
+        glyph_filter.SetScaleFactor(0.005*scale_factor)
+        glyph_filter.SetColorModeToColorByScalar()
+        glyph_filter.SetInputData(vtkobject)
+        glyph_filter.OrientOn()
+        glyph_filter.SetVectorModeToUseVector()
+        glyph_filter.Update()
         writer = vtk.vtkPLYWriter()
-        writer[:SetFileName](string(filepath_noext,".ply"))
-        writer[:SetInputData](glyph_filter[:GetOutput]())
-        writer[:SetArrayName]("**_$(color)_**")
-        writer[:Update]()
+        writer.SetFileName(string(filepath_noext,".ply"))
+        writer.SetInputData(glyph_filter.GetOutput())
+        writer.SetArrayName("**_$(color)_**")
+        writer.Update()
     else
         writer = vtk.vtkPLYWriter()
-        writer[:SetFileName](string(filepath_noext,".ply"))
-        writer[:SetInputData](vtkobject)
-        writer[:SetArrayName]("**_$(color)_**")
-        writer[:Update]()
+        writer.SetFileName(string(filepath_noext,".ply"))
+        writer.SetInputData(vtkobject)
+        writer.SetArrayName("**_$(color)_**")
+        writer.Update()
     end
 end
 
-function get_jl_mapped_colors{T<:AbstractVTKSimpleData}(vtkobject, dataset::T, color_variable_name, component, opacity)
+function get_jl_mapped_colors(vtkobject, dataset::T, color_variable_name, component, opacity) where {T<:AbstractVTKSimpleData}
     if color_variable_name in keys(dataset.point_data)
         point_color = true
         _size = num_of_points(dataset)
@@ -176,15 +176,15 @@ function save_legend(dataset::AbstractStaticVTKData, filepath_noext::String; col
     if color != ""
         renderwindow = make_legend_render_window(dataset, color, background, ncolors, legendtitle, component, opacity, window_size)
         imagefilter = vtk.vtkWindowToImageFilter()
-        imagefilter[:SetInput](renderwindow)
-        imagefilter[:SetViewport](0.8, 0, 1., 1.)
+        imagefilter.SetInput(renderwindow)
+        imagefilter.SetViewport(0.8, 0, 1., 1.)
 
         imagewriter = vtk.vtkPNGWriter()
-        imagewriter[:SetFileName](string(filepath_noext,".png"))
-        imagewriter[:SetInputConnection](imagefilter[:GetOutputPort]())
-        imagewriter[:Write]()
+        imagewriter.SetFileName(string(filepath_noext,".png"))
+        imagewriter.SetInputConnection(imagefilter.GetOutputPort())
+        imagewriter.Write()
 
-        renderwindow[:Finalize]()
+        renderwindow.Finalize()
     end
 end
 
@@ -223,17 +223,17 @@ function make_legend_render_window(dataset, color, background, ncolors, legendti
     end
 
     renderer = vtk.vtkRenderer()
-    renderer[:SetBackground](background...)
+    renderer.SetBackground(background...)
     renderwindow = vtk.vtkRenderWindow()
-    renderwindow[:SetSize](window_size...)
-    renderwindow[:AddRenderer](renderer)
+    renderwindow.SetSize(window_size...)
+    renderwindow.AddRenderer(renderer)
     interactor = vtk.vtkRenderWindowInteractor()
-    interactor[:SetRenderWindow](renderwindow)
+    interactor.SetRenderWindow(renderwindow)
 
     add_scalar_bar!(interactor, cmin, cmax, ncolors, opacity, legendtitle)
 
-    renderwindow[:OffScreenRenderingOn]()
-    renderwindow[:Render]()
+    renderwindow.OffScreenRenderingOn()
+    renderwindow.Render()
 
     return renderwindow
 end
@@ -244,53 +244,53 @@ function add_scalar_bar!(interactor, cmin, cmax, ncolors, opacity, legendtitle)
         jl_legend_colors[:,i] = UInt8[round.(color_map(0+(i-1)*1/ncolors).*255); round(255*opacity)]
     end
     map(fill_jl_legend_colors, 1:ncolors)
-    legend_colors = vtkns.numpy_to_vtk(PyReverseDims(jl_legend_colors))
+    legend_colors = julia_to_vtk(jl_legend_colors)
  
     lut = vtk.vtkLookupTable()
-    lut[:SetTableRange](cmin, cmax)
-    lut[:SetNumberOfColors](ncolors)
-    lut[:SetTable](legend_colors)
+    lut.SetTableRange(cmin, cmax)
+    lut.SetNumberOfColors(ncolors)
+    lut.SetTable(legend_colors)
 
     scalar_bar = vtk.vtkScalarBarActor()
-    scalar_bar[:SetNumberOfLabels](8)
-    scalar_bar[:SetLabelFormat]("%+#6.2e")
-    scalar_bar[:SetLookupTable](lut)
-    scalar_bar[:GetLabelTextProperty]()[:SetFontFamilyToCourier]()
-    scalar_bar[:GetLabelTextProperty]()[:SetJustificationToRight]()
-    scalar_bar[:GetLabelTextProperty]()[:SetVerticalJustificationToBottom]()
-    scalar_bar[:GetLabelTextProperty]()[:BoldOff]()
-    scalar_bar[:GetLabelTextProperty]()[:ItalicOff]()
-    scalar_bar[:GetLabelTextProperty]()[:ShadowOff]()
-    scalar_bar[:GetLabelTextProperty]()[:SetColor](1, 1, 1)
-    scalar_bar[:SetTitle](legendtitle)
-    scalar_bar[:GetTitleTextProperty]()[:SetFontFamilyToArial]()
-    scalar_bar[:GetTitleTextProperty]()[:ItalicOff]()
-    scalar_bar[:GetTitleTextProperty]()[:ShadowOff]()
+    scalar_bar.SetNumberOfLabels(8)
+    scalar_bar.SetLabelFormat("%+#6.2e")
+    scalar_bar.SetLookupTable(lut)
+    scalar_bar.GetLabelTextProperty().SetFontFamilyToCourier()
+    scalar_bar.GetLabelTextProperty().SetJustificationToRight()
+    scalar_bar.GetLabelTextProperty().SetVerticalJustificationToBottom()
+    scalar_bar.GetLabelTextProperty().BoldOff()
+    scalar_bar.GetLabelTextProperty().ItalicOff()
+    scalar_bar.GetLabelTextProperty().ShadowOff()
+    scalar_bar.GetLabelTextProperty().SetColor(1, 1, 1)
+    scalar_bar.SetTitle(legendtitle)
+    scalar_bar.GetTitleTextProperty().SetFontFamilyToArial()
+    scalar_bar.GetTitleTextProperty().ItalicOff()
+    scalar_bar.GetTitleTextProperty().ShadowOff()
 
     # create the scalar bar widget
     scalar_bar_widget = vtk.vtkScalarBarWidget()
-    scalar_bar_widget[:SetInteractor](interactor)
-    scalar_bar_widget[:SetScalarBarActor](scalar_bar)
-    scalar_bar_widget[:On]()    
+    scalar_bar_widget.SetInteractor(interactor)
+    scalar_bar_widget.SetScalarBarActor(scalar_bar)
+    scalar_bar_widget.On()
 end
 
 function color_map(v)
-    if 0. <= v < .25
-        b = 1.
+    if 0.0 <= v < 0.25
+        b = 1.0
         g = v/0.25
-        r = 0.
-    elseif .25 <= v < .5
-        b = 1.-(v-0.25)/0.25
-        g = 1.
-        r = 0.
-    elseif .5 <= v < .75
-        b = 0.
-        g = 1.
+        r = 0.0
+    elseif 0.25 <= v < 0.5
+        b = 1.0-(v-0.25)/0.25
+        g = 1.0
+        r = 0.0
+    elseif 0.5 <= v < 0.75
+        b = 0.0
+        g = 1.0
         r = (v-0.5)/0.25
     else
-        b = 0.
-        g = 1.-(v-0.75)/0.25
-        r = 1.
+        b = 0.0
+        g = 1.0-(v-0.75)/0.25
+        r = 1.0
     end
     return [r,g,b]
 end
@@ -298,93 +298,92 @@ end
 function setup_camera(camera, dataset)
     _bb = bb(dataset)
     calib = max([(_bb[i+1]-_bb[i]) for i in 1:2:length(_bb)]...)
-    camera[:SetFocalPoint](pseudo_center(dataset)...) #Center
-    camera[:Azimuth](37.5)
-    camera[:Elevation](30)
-    camera[:Dolly](0.2/calib)
+    camera.SetFocalPoint(pseudo_center(dataset)...) #Center
+    camera.Azimuth(37.5)
+    camera.Elevation(30)
+    camera.Dolly(0.2/calib)
 end
 
-function make_render_window_and_interactor{T<:AbstractStaticVTKData}(dataset::T, color, 
+function make_render_window_and_interactor(dataset::T, color, 
     RGB, component, opacity, window_size, ncolors, legend, legendtitle, scale_factor, 
-    representation)
+    representation) where {T<:AbstractStaticVTKData}
 
     vtkobject = PyVTK(dataset)
-
     if color in keys(dataset.point_data)
         if RGB
             jl_mapped_colors = UInt8.(round.(reshape(dataset.point_data[color], 
                 (size(dataset.point_data[color], 1), num_of_points(dataset)))))
-            mapped_colors = vtkns.numpy_to_vtk(PyReverseDims(jl_mapped_colors))
-            mapped_colors[:SetNumberOfComponents](size(dataset.point_data[color], 1))
-            vtkobject[:GetPointData]()[:SetScalars](mapped_colors)
+            mapped_colors = julia_to_vtk(jl_mapped_colors)
+            mapped_colors.SetNumberOfComponents(size(dataset.point_data[color], 1))
+            vtkobject.GetPointData().SetScalars(mapped_colors)
         else
             jl_mapped_colors, cmin, cmax = get_jl_mapped_colors(vtkobject, dataset, color, component, opacity)
             if !(cmax ≈ cmin)
-                mapped_colors = vtkns.numpy_to_vtk(PyReverseDims(jl_mapped_colors))
-                vtkobject[:GetPointData]()[:SetScalars](mapped_colors)
+                mapped_colors = julia_to_vtk(jl_mapped_colors)
+                vtkobject.GetPointData().SetScalars(mapped_colors)
             end
         end
     elseif color in keys(dataset.cell_data)
         if RGB
             jl_mapped_colors = UInt8.(round.(reshape(dataset.cell_data[color], 
                 (size(dataset.cell_data[color], 1), num_of_cells(dataset)))))
-            mapped_colors = vtkns.numpy_to_vtk(PyReverseDims(jl_mapped_colors))
-            mapped_colors[:SetNumberOfComponents](size(dataset.cell_data[color], 1))
-            vtkobject[:GetCellData]()[:SetScalars](mapped_colors)
+            mapped_colors = julia_to_vtk(jl_mapped_colors)
+            mapped_colors.SetNumberOfComponents(size(dataset.cell_data[color], 1))
+            vtkobject.GetCellData().SetScalars(mapped_colors)
         else
             jl_mapped_colors, cmin, cmax = get_jl_mapped_colors(vtkobject, dataset, color, component, opacity)
             if !(cmax ≈ cmin)
-                mapped_colors = vtkns.numpy_to_vtk(PyReverseDims(jl_mapped_colors))
-                vtkobject[:GetCellData]()[:SetScalars](mapped_colors)
+                mapped_colors = julia_to_vtk(jl_mapped_colors)
+                vtkobject.GetCellData().SetScalars(mapped_colors)
             end
         end
     end
 
     if representation == :glyph
-        vtkobject[:GetPointData]()[:SetActiveVectors](color)
+        vtkobject.GetPointData().SetActiveVectors(color)
         arrow_source = vtk.vtkArrowSource()
         glyph_filter = vtk.vtkGlyph3D()
-        glyph_filter[:SetSourceConnection](arrow_source[:GetOutputPort]())
-        glyph_filter[:SetScaleFactor](0.005*scale_factor)
-        glyph_filter[:SetColorModeToColorByScalar]()
-        glyph_filter[:SetInputData](vtkobject)
-        glyph_filter[:OrientOn]()
-        glyph_filter[:SetVectorModeToUseVector]()
-        glyph_filter[:Update]()
+        glyph_filter.SetSourceConnection(arrow_source.GetOutputPort())
+        glyph_filter.SetScaleFactor(0.005*scale_factor)
+        glyph_filter.SetColorModeToColorByScalar()
+        glyph_filter.SetInputData(vtkobject)
+        glyph_filter.OrientOn()
+        glyph_filter.SetVectorModeToUseVector()
+        glyph_filter.Update()
         mapper = vtk.vtkDataSetMapper()
-        mapper[:SetInputConnection](glyph_filter[:GetOutputPort]())
+        mapper.SetInputConnection(glyph_filter.GetOutputPort())
     else
         mapper = vtk.vtkDataSetMapper()
-        mapper[:SetInputData](vtkobject)
+        mapper.SetInputData(vtkobject)
     end
 
     actor = vtk.vtkActor()
-    actor[:SetMapper](mapper)
+    actor.SetMapper(mapper)
     if color == "" 
-        actor[:GetProperty]()[:SetColor](1., 1., 1.)
+        actor.GetProperty().SetColor(1.0, 1.0, 1.0)
     end
     if isdefined(:cmin) && isdefined(:cmax) && cmin ≈ cmax
-        actor[:GetProperty]()[:SetColor](0., 0., 1.)
+        actor.GetProperty().SetColor(0.0, 0.0, 1.0)
     end
     if representation == :wireframe
         property = vtk.vtkProperty()
-        property[:SetRepresentationToWireframe]()
-        actor[:SetProperty](property)
+        property.SetRepresentationToWireframe()
+        actor.SetProperty(property)
     end
 
     renderer = vtk.vtkRenderer()
-    renderer[:SetBackground](.1, .2, .3)
-    renderer[:AddActor](actor)
+    renderer.SetBackground(0.1, 0.2, 0.3)
+    renderer.AddActor(actor)
 
     camera = vtk.vtkCamera()
     setup_camera(camera, dataset)
-    renderer[:SetActiveCamera](camera)
+    renderer.SetActiveCamera(camera)
 
     renderwindow = vtk.vtkRenderWindow()
-    renderwindow[:SetSize](window_size...)
-    renderwindow[:AddRenderer](renderer)
+    renderwindow.SetSize(window_size...)
+    renderwindow.AddRenderer(renderer)
     interactor = vtk.vtkRenderWindowInteractor()
-    interactor[:SetRenderWindow](renderwindow)
+    interactor.SetRenderWindow(renderwindow)
 
     if legend && color != "" && !RGB && !(cmin ≈ cmax)
         add_scalar_bar!(interactor, cmin, cmax, ncolors, opacity, legendtitle)
@@ -392,12 +391,12 @@ function make_render_window_and_interactor{T<:AbstractStaticVTKData}(dataset::T,
 
     axes = vtk.vtkAxesActor() 
     widget = vtk.vtkOrientationMarkerWidget()
-    widget[:SetOutlineColor](0.9300,0.5700,0.1300)
-    widget[:SetOrientationMarker](axes)
-    widget[:SetInteractor](interactor)
-    widget[:SetViewport](0., 0., 0.2, 0.2)
-    widget[:SetEnabled](1)
-    widget[:InteractiveOn]()
+    widget.SetOutlineColor(0.9300,0.5700,0.1300)
+    widget.SetOrientationMarker(axes)
+    widget.SetInteractor(interactor)
+    widget.SetViewport(0., 0., 0.2, 0.2)
+    widget.SetEnabled(1)
+    widget.InteractiveOn()
 
     return renderwindow, interactor
 end

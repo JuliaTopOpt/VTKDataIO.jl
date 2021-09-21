@@ -1,3 +1,13 @@
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
+Manifest.toml
+*.vti
+*.vtm
+*.vtr
+*.vts
+*.vtu
+*.vtp
+*.vtr
+*.vts
+*.pvd

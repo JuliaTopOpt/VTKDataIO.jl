@@ -14,27 +14,6 @@ You can use VTKDataIO.jl to visualize a scalar or vector field with a 3D heat ma
 
 You can use `PyVTK` to change a Julia native VTK object to a VTK data PyObject that can be used in your own VTK pipeline through PyCall. You can also use `_VTKDataTypes` to change a VTK data PyObject back to Julia's native VTK types.
 
-## Setup
-
-*The following are the setup steps in Windows. If you are using other OS and you can't set it up, please let me know and I will try to help if I can. Basically if you can reach step 7, you are ready to use VTKDataIO.jl even if you didn't eactly follow the previous steps!*
-
-1. Get VTK on your computer. I tested it using VTK 7.1.1.
-2. Get Python 2.7, and add it to your PATH variable (2nd part is optional but recommended)
-3. Get Numpy
-4. Add the equivalent path to "C:\Program Files\VTK 7.1.1\bin\Lib\site-packages\vtk" to your PYTHONPATH User environment variable on your computer if you are using Windows, or the equivalent in any other OS. Basically make sure when you open a Python shell, and write `import vtk` that it works.
-5. Get PyCall.jl
-6. Find your computer's python.exe file, e.g. "C:\Python27\python.exe", and run the following 2 commands in Julia replacing the path below with your own and "\\" with "\\\\":
-```
-ENV["PYTHON"] = "C:\\Python27\\python.exe"
-Pkg.build("PyCall")
-```
-7. Test the following Julia code and make sure it works.
-```
-using PyCall
-@pyimport vtk as vtk
-@pyimport numpy as np
-```
-
 ## Test cases
 
 If you run the following code, you should be able to get a cubic mesh with randomly coloured cells.

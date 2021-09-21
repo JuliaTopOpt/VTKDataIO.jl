@@ -1,11 +1,10 @@
-
 function get_filepath_info_no_ext(filepath_no_ext)
     pattern = r"^(?P<dir>.+\\)*(?P<file>.+)$"
     _matched = match(pattern, filepath_no_ext)
-    return (typeof(_matched["dir"]) == Void ? "" : _matched["dir"]), _matched["file"]
+    return (typeof(_matched["dir"]) == Nothing ? "" : _matched["dir"]), _matched["file"]
 end
 
-function write_simple_file{T<:AbstractVTKSimpleData}(vtkobject::T, filepath_or_vtmfile::Union{String, WriteVTK.MultiblockFile})
+function write_simple_file(vtkobject::T, filepath_or_vtmfile::Union{String, WriteVTK.MultiblockFile}) where {T<:AbstractVTKSimpleData}
     vtkfile = nothing
     if T <: VTKUnstructuredData
         points = vtkobject.point_coords
@@ -101,14 +100,13 @@ function write_timeseries_file(timeseries_object::AbstractTimeSeriesVTKData, fil
         new_filepath_no_ext = string(subdir, "\\", file, "_", "0"^(no_of_digits - length(string(i))), i)
         T = typeof(timeseries_object[i])
         if T <: VTKPolyData
-            push!(filenames, write_vtp(timeseries_object[i], new_filepath_no_ext))            
+            push!(filenames, write_vtp(timeseries_object[i], new_filepath_no_ext))
         elseif T <: AbstractVTKSimpleData
             push!(filenames, write_simple_file(timeseries_object[i], new_filepath_no_ext))
         elseif T <: AbstractVTKMultiblockData
             push!(filenames, write_blocked_file(timeseries_object[i], new_filepath_no_ext))
         end
     end
-
     for i in 1:length(filenames)
         fname = filenames[i]
         t = timeseries_object.timemarkers[i]
@@ -145,7 +143,7 @@ function valid_to_write(vtkobject::AbstractTimeSeriesVTKData)
     return true, ""
 end
 
-function write_vtk{T<:AbstractVTKData}(vtkobject::T, filepath_no_ext::String; time_resolution::Int=1, validation=false, repeat_cells=false)
+function write_vtk(vtkobject::T, filepath_no_ext::String; time_resolution::Int=1, validation=false, repeat_cells=false) where {T<:AbstractVTKData}
     if validation
         valid, _error = is_valid(vtkobject, repeat_cells=repeat_cells)
         valid || throw("Invalid data, cannot be written: $_error")
