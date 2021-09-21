@@ -16,7 +16,7 @@ jobs:
       matrix:
         julia-version: ['1.6',]
         os: ['ubuntu-latest',]
-        python: [3.8]
+        python: ['3.8',]
     steps:
       - uses: actions/checkout@v2
       - name: Set up 🐍 ${{ matrix.python }}
@@ -35,23 +35,9 @@ jobs:
           python -m pip install --upgrade pip
           yes | pip install vtk
 
-      # Julia Tasks
       - uses: julia-actions/setup-julia@v1
         with:
-          version: ${{ matrix.version }}
-          arch: ${{ matrix.arch }}
-        
-      - uses: actions/cache@v2
-        env:
-          cache-name: cache-artifacts
-        with:
-          path: ~/.julia/artifacts
-          key: ${{ runner.os }}-test-${{ env.cache-name }}-${{ hashFiles('**/Project.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-test-${{ env.cache-name }}-
-            ${{ runner.os }}-test-
-            ${{ runner.os }}-
-
+          version: ${{ matrix.julia-version }}
       - uses: julia-actions/julia-buildpkg@v1
         env:
           PYTHON : "${{ env.pythonLocation }}/bin/python"
