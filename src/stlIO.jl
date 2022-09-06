@@ -4,7 +4,7 @@ function write_stl(dataset::AbstractStaticVTKData, filepath_no_ext::String)
     return write_stl(polydata, filepath_no_ext)
 end
 
-function write_stl(polydata::PyCall.PyObject, filepath_no_ext::String)
+function write_stl(polydata, filepath_no_ext::String)
     writer = vtk.vtkSTLWriter()
     writer.SetFileName(string(filepath_no_ext, ".stl"))
     writer.SetInputData(polydata)
