@@ -1,6 +1,6 @@
 
 function write_stl(dataset::AbstractStaticVTKData, filepath_no_ext::String)
-    polydata = PyVTK(trianulate(dataset))
+    polydata = PyVTK(VTKDataTypes.triangulate(dataset))
     return write_stl(polydata, filepath_no_ext)
 end
 
