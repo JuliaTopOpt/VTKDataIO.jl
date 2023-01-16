@@ -1,4 +1,4 @@
-VTKClasses = Dict(
+const VTKClasses = Dict(
     0=>vtk.vtkEmptyCell,
     1=>vtk.vtkVertex, 
     2=>vtk.vtkPolyVertex,
@@ -302,7 +302,7 @@ function PyVTK(dataset::VTKUniformRectilinearData)
     return grid
 end
 
-function add_structured_data_to_grid!(grid::PyObject, dataset::AbstractVTKStructuredData)
+function add_structured_data_to_grid!(grid, dataset::AbstractVTKStructuredData)
     for m in keys(dataset.point_data)
         _var_dim = var_dim(dataset, m, "Point")
         if _var_dim == 1
@@ -337,7 +337,7 @@ function PyVTK(dataset::VTKMultiblockData)
     return mb
 end
 
-function _VTKDataTypes(pyvtk::PyObject)
+function _VTKDataTypes(pyvtk)
     if pyvtk.GetClassName() == "vtkMultiBlockDataSet"
         return extract_blocked_data(pyvtk)
     else
@@ -345,7 +345,7 @@ function _VTKDataTypes(pyvtk::PyObject)
     end
 end
 
-function write_vtk(pyvtk::PyObject, filepath_noext::String)
+function write_vtk(pyvtk, filepath_noext::String)
     classname = pyvtk.GetClassName()
     if classname == "vtkUnstructuredGrid"
         writer = vtk.vtkXMLUnstructuredGridWriter()

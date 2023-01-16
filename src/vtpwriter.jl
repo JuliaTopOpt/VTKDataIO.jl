@@ -3,7 +3,7 @@ function write_vtp(dataset::VTKPolyData, filepath_no_ext::String)
     return write_vtp(polydata, filepath_no_ext)
 end
 
-function write_vtp(polydata::PyObject, filepath_no_ext::String)
+function write_vtp(polydata, filepath_no_ext::String)
     writer = vtk.vtkXMLPolyDataWriter()
     writer.SetFileName(string(filepath_no_ext, ".vtp"))
     writer.SetDataModeToBinary()

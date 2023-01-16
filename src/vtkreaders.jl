@@ -3,10 +3,10 @@ vtk_to_julia(x::Vector, T) = convert.(T, x)
 vtk_to_julia(x::Matrix, T) = convert.(T, copy(x'))
 
 function julia_to_vtk(x::Matrix, args...)
-    return @pycall vtkns.numpy_to_vtk(PyReverseDims(x), args...)::PyObject
+    return vtkns.numpy_to_vtk(PyReverseDims(x), args...)
 end
 function julia_to_vtk(x::Vector, args...)
-    return @pycall vtkns.numpy_to_vtk(np.array(x), args...)::PyObject
+    return vtkns.numpy_to_vtk(np.array(x), args...)
 end
 
 function pytype_as_string(x)
@@ -18,7 +18,7 @@ function pytype_as_string(x)
     end
 end
 
-function read_vtk(reader::PyCall.PyObject)
+function read_vtk(reader)
     if in(reader.GetFileName(), readdir())
         reader.Update()
     else
